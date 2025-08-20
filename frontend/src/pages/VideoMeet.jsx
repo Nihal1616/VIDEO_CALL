@@ -13,7 +13,7 @@ import StopScreenShareIcon from "@mui/icons-material/StopScreenShare";
 import ChatIcon from "@mui/icons-material/Chat";
 
 import ShareMeetingButton from "./share";
-import server from "../../../backend/src/environment";
+import server from "../environment.js";
 
 const server_url = server;
 
