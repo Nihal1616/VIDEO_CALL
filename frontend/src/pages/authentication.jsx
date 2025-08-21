@@ -3,14 +3,10 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { AuthContext } from "../contexts/AuthContext";
 import { Snackbar } from "@mui/material";
@@ -35,13 +31,12 @@ export default function Authentication() {
   let handleAuth = async () => {
     try {
       if (formState === 0) {
-        let result = await handleLogin(username, password);
+        await handleLogin(username, password);
       }
       if (formState === 1) {
-        let result = await handleRegister(name, username, password);
-        console.log(result);
+        const registerMessage = await handleRegister(name, username, password);
         setUsername("");
-        setMessage(result);
+        setMessage(registerMessage);
         setOpen(true);
         setError("");
         setFormState(0);
@@ -49,7 +44,7 @@ export default function Authentication() {
       }
     } catch (err) {
       console.log(err);
-      let message = err.response.data.message;
+      let message = err.response?.data?.message || "An error occurred.";
       setError(message);
     }
   };
