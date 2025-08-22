@@ -1,0 +1,37 @@
+/*
+  Redirect all requests to index.html for React Router support
+*/
+/* This file should be placed in your frontend/build or frontend/public directory before deployment */
+
+/* Catch-all rule */
+/*
+  If you're using the static site option on Render, place this in the build output directory (build/)
+*/
+
+/* Redirect all routes to index.html */
+/*
+  This will ensure that any route (e.g., /meetingcode) will load your React app and not show 404
+*/
+
+/* /index.html 200 */
+/*
+  Netlify syntax: 
+  /*    /index.html   200
+*/
+/*
+  Render supports Netlify-style _redirects files for static sites
+*/
+/*
+  Place this file as 'build/_redirects' before deploying
+*/
+/*
+  Example:
+  /*    /index.html   200
+*/
+/*
+  This is all you need in the file:
+*/
+/*    /    /index.html   200
+*/
+/
+  /index.html   200

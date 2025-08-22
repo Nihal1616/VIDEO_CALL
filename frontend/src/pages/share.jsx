@@ -9,20 +9,19 @@ function ShareMeetingButton({ meetingCode }) {
       return;
     }
 
-    const shareData = {
-      title: "Join my Video Call",
-      text: `Join my video meeting using this code: ${meetingCode}`,
-      url: window.location.origin + "/" + meetingCode,
-    };
+    const shareText = `Join my video meeting using this code: ${meetingCode}`;
 
     if (navigator.share) {
       navigator
-        .share(shareData)
-        .then(() => console.log("Meeting shared successfully"))
+        .share({
+          title: "Join my Video Call",
+          text: shareText
+        })
+        .then(() => console.log("Meeting code shared successfully"))
         .catch((err) => console.error("Error sharing:", err));
     } else {
       // Fallback for browsers without Web Share API
-      const whatsappUrl = `https://wa.me/?text=Join my video meeting: ${shareData.url}`;
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
       window.open(whatsappUrl, "_blank");
     }
   };

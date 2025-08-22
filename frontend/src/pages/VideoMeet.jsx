@@ -12,7 +12,7 @@ import ScreenShareIcon from "@mui/icons-material/ScreenShare";
 import StopScreenShareIcon from "@mui/icons-material/StopScreenShare";
 import ChatIcon from "@mui/icons-material/Chat";
 import server from "../environment";
-import ShareMeetingButton from './share.jsx'
+import ShareMeetingButton from "./share.jsx";
 
 const server_url = server;
 
@@ -62,9 +62,9 @@ export default function VideoMeetComponent() {
   // }
 
   useEffect(() => {
-    console.log("HELLO");
     getPermissions();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   let getDislayMedia = () => {
     if (screen) {
@@ -80,47 +80,28 @@ export default function VideoMeetComponent() {
 
   const getPermissions = async () => {
     try {
-      const videoPermission = await navigator.mediaDevices.getUserMedia({
+      // Request both video and audio at once
+      const userMediaStream = await navigator.mediaDevices.getUserMedia({
         video: true,
-      });
-      if (videoPermission) {
-        setVideoAvailable(true);
-        console.log("Video permission granted");
-      } else {
-        setVideoAvailable(false);
-        console.log("Video permission denied");
-      }
-
-      const audioPermission = await navigator.mediaDevices.getUserMedia({
         audio: true,
       });
-      if (audioPermission) {
+      if (userMediaStream) {
+        window.localStream = userMediaStream;
+        if (localVideoref.current) {
+          localVideoref.current.srcObject = userMediaStream;
+        }
+        setVideoAvailable(true);
         setAudioAvailable(true);
-        console.log("Audio permission granted");
-      } else {
-        setAudioAvailable(false);
-        console.log("Audio permission denied");
+        console.log("Video and audio permission granted");
       }
-
       if (navigator.mediaDevices.getDisplayMedia) {
         setScreenAvailable(true);
       } else {
         setScreenAvailable(false);
       }
-
-      if (videoAvailable || audioAvailable) {
-        const userMediaStream = await navigator.mediaDevices.getUserMedia({
-          video: videoAvailable,
-          audio: audioAvailable,
-        });
-        if (userMediaStream) {
-          window.localStream = userMediaStream;
-          if (localVideoref.current) {
-            localVideoref.current.srcObject = userMediaStream;
-          }
-        }
-      }
     } catch (error) {
+      setVideoAvailable(false);
+      setAudioAvailable(false);
       console.log(error);
     }
   };
@@ -489,7 +470,7 @@ export default function VideoMeetComponent() {
     socketRef.current.emit("chat-message", message, username);
     setMessage("");
 
-    // this.setState({ message: "", sender: username })
+    
   };
 
   let connect = () => {
@@ -503,8 +484,7 @@ export default function VideoMeetComponent() {
       {askForUsername === true ? (
         <div
           style={{
-            padding: "2rem",
-            background: "#BBE7FE",
+            padding: "2rem"
           }}
         >
           <h2>Enter into Lobby </h2>
@@ -527,7 +507,6 @@ export default function VideoMeetComponent() {
           <div style={{ display: "flex", alignItems: "center" }}>
             <div style={{ marginTop: "1rem", padding: "1rem" }}>
               <video
-                style={{ borderRadius: "12px" }}
                 ref={localVideoref}
                 autoPlay
                 muted
