@@ -1,42 +1,34 @@
 
 /* Responsive styles for mobile and tablet */
 @media (max-width: 900px) {
-    .chatRoom {
-        width: 60vw;
-        min-width: 0;
-        max-width: 100vw;
-        right: 0;
-        left: unset;
-        border-radius: 10px 0 0 10px;
-    }
-    .chattingDisplay {
-        width: 60vw;
-        height: 40vh;
-    }
-}
-
-@media (max-width: 600px) {
     .meetVideoContainer {
         flex-direction: column;
         height: auto;
         min-height: 100vh;
         padding: 0.5rem;
+        width: 100vw;
+        box-sizing: border-box;
     }
     .conferenceView {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
         align-items: center;
-        padding: 0.5rem;
+        justify-content: center;
+        width: 100vw;
         gap: 0.5rem;
+        overflow-x: auto;
+        box-sizing: border-box;
     }
     .meetUserVideo, .conferenceView video {
         position: static;
-        width: 100vw !important;
+        width: 45vw !important;
         height: auto !important;
-        max-width: 100vw;
-        min-width: 0;
-        margin: 0 auto 1rem auto;
+        max-width: 90vw;
+        min-width: 120px;
+        margin: 0.5rem auto;
         left: unset;
         bottom: unset;
+        border-radius: 12px;
     }
     .buttonContainers {
         position: static;
@@ -55,6 +47,61 @@
         height: auto;
         border-radius: 0;
         padding-inline: 5px;
+        margin-top: 1rem;
+    }
+    .chattingDisplay {
+        width: 100vw;
+        height: 30vh;
+    }
+}
+
+@media (max-width: 600px) {
+    .meetVideoContainer {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        padding: 0.5rem;
+        width: 100vw;
+        box-sizing: border-box;
+    }
+    .conferenceView {
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem;
+        gap: 0.5rem;
+        width: 100vw;
+        overflow-x: auto;
+        box-sizing: border-box;
+    }
+    .meetUserVideo, .conferenceView video {
+        position: static;
+        width: 100vw !important;
+        height: auto !important;
+        max-width: 100vw;
+        min-width: 0;
+        margin: 0 auto 1rem auto;
+        left: unset;
+        bottom: unset;
+        border-radius: 10px;
+    }
+    .buttonContainers {
+        position: static;
+        width: 100vw;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .chatRoom {
+        position: static;
+        width: 100vw;
+        min-width: 0;
+        max-width: 100vw;
+        height: auto;
+        border-radius: 0;
+        padding-inline: 5px;
+        margin-top: 1rem;
     }
     .chattingDisplay {
         width: 100vw;
