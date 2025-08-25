@@ -10,12 +10,15 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { AuthContext } from "../contexts/AuthContext";
 import { Snackbar } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
 export default function Authentication() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [username, setUsername] = React.useState();
   const [password, setPassword] = React.useState();
   const [name, setName] = React.useState();
@@ -32,6 +35,14 @@ export default function Authentication() {
     try {
       if (formState === 0) {
         await handleLogin(username, password);
+        // After login, redirect to intended page if present
+        const params = new URLSearchParams(location.search);
+        const redirect = params.get("redirect");
+        if (redirect) {
+          navigate(redirect);
+        } else {
+          navigate("/home");
+        }
       }
       if (formState === 1) {
         const registerMessage = await handleRegister(name, username, password);

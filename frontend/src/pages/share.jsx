@@ -5,19 +5,20 @@ import ShareIcon from "@mui/icons-material/Share";
 function ShareMeetingButton({ meetingCode }) {
   const handleShare = () => {
     if (!meetingCode) {
-      alert("Meeting code not available");
+      alert("Meeting URL not available");
       return;
     }
 
-    const shareText = `Join my video meeting using this code: ${meetingCode}`;
+    const shareText = `Join my video meeting: ${meetingCode}`;
 
     if (navigator.share) {
       navigator
         .share({
           title: "Join my Video Call",
-          text: shareText
+          text: shareText,
+          url: meetingCode
         })
-        .then(() => console.log("Meeting code shared successfully"))
+        .then(() => console.log("Meeting URL shared successfully"))
         .catch((err) => console.error("Error sharing:", err));
     } else {
       // Fallback for browsers without Web Share API
@@ -27,11 +28,26 @@ function ShareMeetingButton({ meetingCode }) {
   };
 
   return (
-    <Button variant="outlined" style={{ marginTop: "1rem" }}>
-      <IconButton onClick={handleShare} color="primary">
-        <ShareIcon />
+    // <Button variant="outlined" style={{ marginTop: "1rem" }}>
+      <IconButton
+        variant="outlined"
+        style={{
+          marginTop: "1rem",
+          marginBottom: "1rem",
+          border: "1px solid black",
+          width: 48,
+          height: 48,
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+        onClick={handleShare}
+        color="primary"
+      >
+        <ShareIcon style={{ fontSize: 28 }} />
       </IconButton>
-    </Button>
+    // </Button>
   );
 }
 

@@ -2,18 +2,37 @@ import React, { useContext, useState } from "react";
 import withAuth from "../utils/withAuth";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
-import { Button, IconButton, TextField } from "@mui/material";
+import { Button, IconButton, Snackbar, Alert } from "@mui/material";
 import RestoreIcon from "@mui/icons-material/Restore";
 import { AuthContext } from "../contexts/AuthContext";
+
+function generateRandomCode(length = 8) {
+  return Math.random()
+    .toString(36)
+    .substring(2, 2 + length);
+}
 
 function HomeComponent() {
   let navigate = useNavigate();
   const [meetingCode, setMeetingCode] = useState("");
 
   const { addToUserHistory } = useContext(AuthContext);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [createdMeetingCode, setCreatedMeetingCode] = useState("");
+
   let handleJoinVideoCall = async () => {
     await addToUserHistory(meetingCode);
     navigate(`/${meetingCode}`);
+  };
+
+  // Create a new meeting with a random code
+  let handleCreateMeeting = async () => {
+    const newCode = generateRandomCode();
+    await addToUserHistory(newCode);
+    setCreatedMeetingCode(newCode);
+    setMeetingCode(newCode); // Autofill the join input with the new code
+    setOpenSnackbar(true);
+    // Do not navigate immediately; prompt user to click Join
   };
 
   return (
@@ -51,16 +70,36 @@ function HomeComponent() {
           <div>
             <h2>Providing Quality Video Call Just Like Quality Education</h2>
 
-            <div style={{ display: "flex", gap: "10px", marginTop: "1rem" }}>
-              <TextField
-                onChange={(e) => setMeetingCode(e.target.value)}
-                id="outlined-basic"
-                label="Meeting Code"
-                variant="outlined"
-              />
-              <Button onClick={handleJoinVideoCall} variant="contained">
-                Join
-              </Button>
+            <div
+              style={{
+                marginTop: "1rem",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ marginBottom: "1rem", marginTop: "2rem" }}>
+                <Button variant="contained" onClick={handleCreateMeeting}>
+                  Create Meeting
+                </Button>
+              </div>
+
+              <div>
+                <Button onClick={handleJoinVideoCall} variant="contained">
+                  Join
+                </Button>
+              </div>
+              <Snackbar
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                open={openSnackbar}
+                autoHideDuration={4000}
+                onClose={() => setOpenSnackbar(false)}
+              >
+                <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+                  Successfully created the meeting. Now click on Join button to join meeting.
+                </Alert>
+              </Snackbar>
             </div>
           </div>
         </div>

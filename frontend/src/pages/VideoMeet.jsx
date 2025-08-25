@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import io from "socket.io-client";
 import { Badge, IconButton, TextField } from "@mui/material";
 import { Button } from "@mui/material";
@@ -23,6 +24,7 @@ const peerConfigConnections = {
 };
 
 export default function VideoMeetComponent() {
+  const isMobile = useMediaQuery("(max-width:600px)");
   var socketRef = useRef();
   let socketIdRef = useRef();
 
@@ -518,7 +520,7 @@ export default function VideoMeetComponent() {
     getMedia();
   };
 
-  
+  const meetingFullCode = window.location.href;
   return (
     <div>
       {askForUsername === true ? (
@@ -544,18 +546,39 @@ export default function VideoMeetComponent() {
             Connect
           </Button>
 
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ marginTop: "1rem", padding: "1rem" }}>
-              <video ref={localVideoref} autoPlay muted></video>
+          {isMobile ? (
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flexStart",
+                marginBottom: "1rem",
+                marginTop:"1rem"
+              }}
+            >
+              <h2 style={{}}>Share the video link</h2>
+              <ShareMeetingButton meetingCode={meetingFullCode} />
+              <div>
+                <video
+                  ref={localVideoref}
+                  autoPlay
+                  muted
+                  style={{ width: "100%" ,marginTop:"2rem"}}
+                ></video>
+              </div>
             </div>
-
-            <div style={{ marginLeft: "2rem" }}>
-              <h2>Share the video link</h2>
-
-              {/* Share Button */}
-              <ShareMeetingButton meetingCode={meetingCode} />
+          ) : (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ marginTop: "1rem", padding: "1rem" }}>
+                <video ref={localVideoref} autoPlay muted></video>
+              </div>
+              <div style={{ marginLeft: "2rem" }}>
+                <h2>Share the video link</h2>
+                <ShareMeetingButton meetingCode={meetingFullCode} />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       ) : (
         <div className={styles.meetVideoContainer}>

@@ -20,14 +20,18 @@ export default function LandingPage() {
           </p>
           <p
             onClick={() => {
-              router("/auth");
+             router(
+               `/auth?redirect=${encodeURIComponent(window.location.pathname)}`
+             );;
             }}
           >
             Register
           </p>
           <div
             onClick={() => {
-              router("/auth");
+              router(
+                `/auth?redirect=${encodeURIComponent(window.location.pathname)}`
+              );
             }}
             role="button"
           >
