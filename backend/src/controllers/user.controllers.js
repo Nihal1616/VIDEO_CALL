@@ -4,6 +4,8 @@ import bcrypt, { hash } from "bcrypt";
 
 import crypto from "crypto";
 import { Meeting } from "../models/meeting.model.js";
+
+
 const login = async (req, res) => {
   const { username, password } = req.body;
 
@@ -95,4 +97,19 @@ const addToHistory = async (req, res) => {
   }
 };
 
-export { login, register, getUserHistory, addToHistory };
+const deleteMeeting=async(req,res)=>{
+  const meetingId=req.params.id;
+  try{
+    await Meeting.deleteOne({meetingCode:meetingId});
+
+    //Broadcast to all clients that meeting ended
+    io.to(meetingId).emit("meeting-ended");
+
+    res.json({success:true,message:"MeeTing ended and deleted"});
+  }catch(e){
+    res.status(500).json({success:false,error:e.message});
+  }
+
+}
+
+export { login, register, getUserHistory, addToHistory,deleteMeeting };

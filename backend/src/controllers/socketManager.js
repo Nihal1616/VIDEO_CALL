@@ -15,6 +15,20 @@ export const connectToSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
+    // Handle end-meeting event from host
+    socket.on("end-meeting", (roomPath) => {
+      console.log("[end-meeting] Received roomPath:", roomPath);
+      console.log("[end-meeting] Current room keys:", Object.keys(connections));
+      if (connections[roomPath]) {
+        connections[roomPath].forEach((participantId) => {
+          io.to(participantId).emit("meeting-ended");
+        });
+        // Optionally, clean up the room
+        delete connections[roomPath];
+      } else {
+        console.log("[end-meeting] No matching room found for:", roomPath);
+      }
+    });
     console.log("SOMETHING CONNECTED");
 
     socket.on("join-call", (path) => {

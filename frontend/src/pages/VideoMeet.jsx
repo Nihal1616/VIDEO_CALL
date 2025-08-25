@@ -56,6 +56,8 @@ export default function VideoMeetComponent() {
 
   let [videos, setVideos] = useState([]);
 
+  const meetingCode = window.location.href.split("/").pop();
+
   // TODO
   // if(isChrome() === false) {
 
@@ -307,6 +309,11 @@ export default function VideoMeetComponent() {
         setVideos((videos) => videos.filter((video) => video.socketId !== id));
       });
 
+      socketRef.current.on("meeting-ended", () => {
+        alert("Meeting has ended.");
+        window.location.href = "/";
+      });
+
       socketRef.current.on("user-joined", (id, clients) => {
         clients.forEach((socketListId) => {
           connections[socketListId] = new RTCPeerConnection(
@@ -436,12 +443,26 @@ export default function VideoMeetComponent() {
     setScreen(!screen);
   };
 
-  let handleEndCall = () => {
+  let handleEndCall = async () => {
     try {
-      let tracks = localVideoref.current.srcObject.getTracks();
-      tracks.forEach((track) => track.stop());
-    } catch (e) {}
-    window.location.href = "/";
+      // Stop local tracks
+      if (localVideoref.current && localVideoref.current.srcObject) {
+        let tracks = localVideoref.current.srcObject.getTracks();
+        tracks.forEach((track) => track.stop());
+      }
+
+      // Notify backend to end meeting
+      socketRef.current.emit("end-meeting", window.location.href);
+      
+      await fetch(`${server_url}/api/meetings/${meetingCode}`, {
+        method: "DELETE",
+      });
+
+      // Redirect host
+      window.location.href = "/";
+    } catch (e) {
+      console.error("Error ending call:", e);
+    }
   };
 
   let openChat = () => {
@@ -469,8 +490,6 @@ export default function VideoMeetComponent() {
     console.log(socketRef.current);
     socketRef.current.emit("chat-message", message, username);
     setMessage("");
-
-    
   };
 
   let connect = () => {
@@ -478,13 +497,13 @@ export default function VideoMeetComponent() {
     getMedia();
   };
 
-  const meetingCode = window.location.href.split("/").pop();
+  
   return (
     <div>
       {askForUsername === true ? (
         <div
           style={{
-            padding: "2rem"
+            padding: "2rem",
           }}
         >
           <h2>Enter into Lobby </h2>
@@ -506,11 +525,7 @@ export default function VideoMeetComponent() {
 
           <div style={{ display: "flex", alignItems: "center" }}>
             <div style={{ marginTop: "1rem", padding: "1rem" }}>
-              <video
-                ref={localVideoref}
-                autoPlay
-                muted
-              ></video>
+              <video ref={localVideoref} autoPlay muted></video>
             </div>
 
             <div style={{ marginLeft: "2rem" }}>
