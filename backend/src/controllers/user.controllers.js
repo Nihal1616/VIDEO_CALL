@@ -112,4 +112,25 @@ const deleteMeeting=async(req,res)=>{
 
 }
 
-export { login, register, getUserHistory, addToHistory,deleteMeeting };
+// Get meeting info by code
+const getMeetingInfo = async (req, res) => {
+  const meetingId = req.params.id;
+  try {
+    const meeting = await Meeting.findOne({ meetingCode: meetingId });
+    if (!meeting) {
+      return res.status(404).json({ message: "Meeting not found" });
+    }
+    res.json(meeting);
+  } catch (e) {
+    res.status(500).json({ message: `Something went wrong ${e}` });
+  }
+};
+
+export {
+  login,
+  register,
+  getUserHistory,
+  addToHistory,
+  deleteMeeting,
+  getMeetingInfo,
+};

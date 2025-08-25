@@ -55,8 +55,11 @@ export default function VideoMeetComponent() {
   const videoRef = useRef([]);
 
   let [videos, setVideos] = useState([]);
+  const [hostUsername, setHostUsername] = useState("");
 
   const meetingCode = window.location.href.split("/").pop();
+  // Host logic: first to join is host
+  const [isHost, setIsHost] = useState(false);
 
   // TODO
   // if(isChrome() === false) {
@@ -315,6 +318,13 @@ export default function VideoMeetComponent() {
       });
 
       socketRef.current.on("user-joined", (id, clients) => {
+        // Host is the first in the clients array
+        setIsHost(hostUsername === username);
+        if (socketRef.current.id === clients[0]) {
+          setIsHost(true);
+        } else {
+          setIsHost(false);
+        }
         clients.forEach((socketListId) => {
           connections[socketListId] = new RTCPeerConnection(
             peerConfigConnections
@@ -451,14 +461,14 @@ export default function VideoMeetComponent() {
         tracks.forEach((track) => track.stop());
       }
 
-      // Notify backend to end meeting
-      socketRef.current.emit("end-meeting", window.location.href);
-      
-      await fetch(`${server_url}/api/meetings/${meetingCode}`, {
-        method: "DELETE",
-      });
-
-      // Redirect host
+      if (isHost) {
+        // Host ends meeting for all
+        socketRef.current.emit("end-meeting", window.location.href);
+        await fetch(`${server_url}/api/meetings/${meetingCode}`, {
+          method: "DELETE",
+        });
+      }
+      // All: redirect self
       window.location.href = "/";
     } catch (e) {
       console.error("Error ending call:", e);
@@ -492,8 +502,19 @@ export default function VideoMeetComponent() {
     setMessage("");
   };
 
-  let connect = () => {
+  let connect = async () => {
     setAskForUsername(false);
+    // Fetch meeting info to get host
+    try {
+      const res = await fetch(`${server_url}/api/meetings/${meetingCode}`);
+      if (res.ok) {
+        const meeting = await res.json();
+        setHostUsername(meeting.user_id);
+        setIsHost(meeting.user_id === username);
+      }
+    } catch (e) {
+      console.error("Could not fetch meeting info", e);
+    }
     getMedia();
   };
 
