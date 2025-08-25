@@ -4,7 +4,8 @@ import {
   getUserHistory,
   login,
   register,
-  deleteMeeting
+  deleteMeeting,
+  getMeetingInfo
 } from "../controllers/user.controllers.js";
 
 const router = Router();
